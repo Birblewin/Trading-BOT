@@ -1,0 +1,43 @@
+// Crypto Trading Bot
+
+// Imports
+const ccxt = require('ccxt');
+const { Trader } = require('trader');
+const { Exchange } = require('exchange');
+ 
+// Initialize the trader and exchange objects 
+let trader = new Trader(); 
+let exchange = new Exchange(ccxt); 
+ 
+// Set up the trading parameters 
+let currencyPair = 'BTC/USD'; // Currency pair to trade 
+let amountToTrade = 0.1; // Amount of currency to trade 
+let buyPriceThreshold = 8000; // Buy when price is below this threshold 
+let sellPriceThreshold = 8500; // Sell when price is above this threshold  
+
+ // Start the trading loop  
+async function startTrading() {  
+
+    while (true) {  
+
+        // Get the current market price of the currency pair  
+        let marketPrice = await exchange.getMarketPrice(currencyPair);  
+
+        if (marketPrice < buyPriceThreshold) {  
+
+            // Buy the currency pair at market price  
+            await trader.buy(currencyPair, amountToTrade, marketPrice);  
+
+        } else if (marketPrice > sellPriceThreshold) {  
+
+            // Sell the currency pair at market price  
+            await trader.sell(currencyPair, amountToTrade, marketPrice);  
+
+        } else {  
+
+            console.log('Waiting for a better opportunity...');   
+
+        }   
+
+    }   															    
+}
